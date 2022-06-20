@@ -35,32 +35,47 @@ def change_def_plugboard_settings(rand=True,plugboard=None):
             plugboard=np.loadtxt(plugboard,dtype=np.int64)
     np.savetxt(plugboard_info_file,plugboard,fmt='%1d')
 
-def change_def_rotor_settings(randselrotors=True,selrotors=None,randstartpos=True,startpos=None):
+def change_def_rotor_settings(sel=True,randselrotors=True,selrotors=None,sp=True,randstartpos=True,startpos=None):
     # randselrotors(randstartpos) is boolean flag implying whether the data to replace current data with is generated randomly
     # if randselrotors(randstartpos)=False selrotors(startpos) can be filenames or the actual tuples
-    if randselrotors:
-        selrotors=randset.randselrotors(max_rotor_cnt)
-    else:
-        if not isinstance(selrotors,tuple):
-            f=open(selrotors)
-            s=f.getline.split(' ')
-            f.close()
-            selrotors=tuple([np.int64(i) for i in s])
-    f.open(selected_rotors_file,'w')
-    f.write(str(selrotors[0])+' '+str(selrotors[1])+' '+str(selrotors[2])+'\n')
-    f.close()
+    if sel:
+        if randselrotors:
+            selrotors=randset.randselrotors(max_rotor_cnt)
+        else:
+            if not isinstance(selrotors,tuple):
+                f=open(selrotors)
+                s=f.readline().split(' ')
+                f.close()
+                selrotors=tuple([np.int64(i) for i in s])
+        f=open(selected_rotors_file,'w')
+        f.write(str(selrotors[0])+' '+str(selrotors[1])+' '+str(selrotors[2])+'\n')
+        f.close()
 
-    if randstartpos:
-        startpos=randset.randstartpos(char_cnt)
-    else:
-        if not isinstance(startpos,tuple):
-            f=open(startpos)
-            s=f.readline().split(' ')
-            f.close()
-            startpos=tuple([np.int64(i) for i in s])
-    f.open(start_pos_file,'w')
-    f.write(str(startpos[0])+' '+str(startpos[1])+' '+str(startpos[2])+'\n')
-    f.close()
+    if sp:
+        if randstartpos:
+            startpos=randset.randstartpos(char_cnt)
+        else:
+            if not isinstance(startpos,tuple):
+                f=open(startpos)
+                s=f.readline().split(' ')
+                f.close()
+                startpos=tuple([np.int64(i) for i in s])
+        f=open(start_pos_file,'w')
+        f.write(str(startpos[0])+' '+str(startpos[1])+' '+str(startpos[2])+'\n')
+        f.close()
+
+def main():
+    # change_def_plugboard_settings()
+    # change_def_rotor_settings()
+    # plugboard_input=np.array([[2,3],[23,87],[92,4]])
+    # selrotors_input=(3,7,2)
+    # start_pos_input=(23,42,13)
+    # start_pos_input='/home/rounak/Documents/jupyter/environment/Enigma/src/temp_file.txt'
+    # change_def_plugboard_settings(rand=False,plugboard=plugboard_input)
+    # change_def_rotor_settings(sel=False,randstartpos=False,startpos=start_pos_input)
+    pass
 
 
-    
+
+if __name__=='__main__':
+    main()
