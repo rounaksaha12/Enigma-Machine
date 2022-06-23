@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import filedialog
 from functools import partial
-from datetime import datetime
+from datetime import date, datetime
+import numpy as np
+import enigma
 import os
 
 src_dir=os.path.dirname(os.path.realpath(__file__))
@@ -19,7 +21,37 @@ def fileClick():
     pass
 
 def process():
-    pass
+    sel_rotors_str=selrotors_settings.get('1.0',END)
+    sel_rotors_arr=np.fromstring(sel_rotors_str,dtype=np.int64,sep=' ')
+    sel_rotors_tup=(sel_rotors_arr[0],sel_rotors_arr[1],sel_rotors_arr[2])
+
+    start_pos_str=startpos_settings.get('1.0',END)
+    start_pos_arr=np.fromstring(start_pos_str,dtype=np.int64,sep=' ')
+    start_pos_tup=(start_pos_arr[0],start_pos_arr[1],start_pos_arr[2])
+
+    plugboard_str=plugboard_settings.get('1.0',END)
+    plugboard_str=plugboard_str.replace('\n',' ')
+    plugboard_arr=np.fromstring(plugboard_str,dtype=np.int64,sep=' ')
+    plugboard_arr=np.reshape(plugboard_arr,(np.int64(plugboard_arr.shape[0]/2),2))
+
+    output_str=''
+    output_str=output_str+heading.get()+'\n\n'
+    output_str=output_str+uncr_input.get('1.0',END)+'\n'
+
+    sample_enigma=enigma.enigma(selected_rotors=sel_rotors_tup,start_pos=start_pos_tup,plugboard=plugboard_arr)
+    output_str=output_str+sample_enigma.convert(encr_input.get('1.0',END))+'\n'
+
+    now=datetime.now()
+    dt_string.set(now.strftime("%d/%m/%Y %H:%M:%S"))
+    output_str=output_str+time.get()
+    print(output_str)
+
+    output.configure(state='normal')
+    output.delete('1.0',END)
+    output.insert(END,output_str)
+    output.configure(state='disabled')
+
+
 
 if __name__ == '__main__':
     root = Tk()
@@ -30,7 +62,7 @@ if __name__ == '__main__':
     txtent=Frame(root)
     txtent.grid(row=0,column=1,rowspan=9)
     heading_txt=StringVar()
-    heading=Entry(txtent,textvariable=heading_txt,font=("Nimbus Mono PS",12,'bold'),justify=CENTER,width=50)
+    heading=Entry(txtent,textvariable=heading_txt,font=("Nimbus Mono PS",12),justify=CENTER,width=50)
     heading.insert(0,'Enter title here ...')
     heading.grid(row=0,column=0,padx="5", pady="5",ipadx="10",ipady="10")
 
@@ -67,7 +99,7 @@ if __name__ == '__main__':
     button_frame=Frame(txtent)
     button_frame.grid(row=7,column=1,rowspan=5)
 
-    convert_button=Button(button_frame,font=('Nimbus Mono PS',12),text='PROCESS INPUT',command=fileClick)
+    convert_button=Button(button_frame,font=('Nimbus Mono PS',12),text='PROCESS INPUT',command=process)
     convert_button.grid(row=0,column=0,columnspan=3,padx=5,pady=5)
 
     chose_folder_label=Label(button_frame,text="Save to (dir)",font=('Nimbus Mono PS',10))
@@ -109,34 +141,34 @@ if __name__ == '__main__':
     #myButton = Button(root, text="Process", command=partial(process, clicked))
     #myButton.grid(row=0, column=3)
 
-    my_frame=Frame(root,highlightthickness=2,highlightbackground='black')
-    my_frame.grid(row=0,column=0,rowspan=9,padx=5,pady=5)
+    engsett=Frame(root,highlightthickness=2,highlightbackground='black')
+    engsett.grid(row=0,column=0,rowspan=9,padx=5,pady=5)
 
-    engsett_label=Label(my_frame,text='ENIGMA\nSETTINGS',font=('Nimbus Mono PS',10,'bold'))
+    engsett_label=Label(engsett,text='ENIGMA\nSETTINGS',font=('Nimbus Mono PS',10,'bold'))
     engsett_label.grid(row=0,column=0)
 
-    selrotors_label=Label(my_frame,text='Selected\nrotors:',font=('Nimbus Mono PS',10))
+    selrotors_label=Label(engsett,text='Selected\nrotors:',font=('Nimbus Mono PS',10))
     selrotors_label.grid(row=1,column=0)
 
-    selrotors_settings=Text(my_frame,font=('Nimbus Mono PS',10),width=8,height=2)
+    selrotors_settings=Text(engsett,font=('Nimbus Mono PS',10),width=8,height=2)
     f=open(selected_rotors_file)
     selrotors_settings.insert('end',f.read())
     f.close()
     selrotors_settings.grid(row=2,column=0)
 
-    startpos_label=Label(my_frame,text='Startpos:',font=('Nimbus Mono PS',10))
+    startpos_label=Label(engsett,text='Startpos:',font=('Nimbus Mono PS',10))
     startpos_label.grid(row=3,column=0)
 
-    startpos_settings=Text(my_frame,font=('Nimbus Mono PS',10),width=8,height=2)
+    startpos_settings=Text(engsett,font=('Nimbus Mono PS',10),width=8,height=2)
     f=open(start_pos_file)
     startpos_settings.insert('end',f.read())
     f.close()
     startpos_settings.grid(row=4,column=0)
 
-    plugboard_label=Label(my_frame,text='Plugbrd\npairings:',font=('Nimbus Mono PS',10))
+    plugboard_label=Label(engsett,text='Plugbrd\npairings:',font=('Nimbus Mono PS',10))
     plugboard_label.grid(row=5,column=0)
 
-    plugboard_settings=Text(my_frame,font=('Nimbus Mono PS',10),width=8,height=42)
+    plugboard_settings=Text(engsett,font=('Nimbus Mono PS',10),width=8,height=42)
     f=open(plugboard_info_file)
     plugboard_settings.insert('end',f.read())
     f.close()

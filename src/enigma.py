@@ -154,7 +154,7 @@ class enigma:
                 self.rotate_rotor_one()
                 if self.vis[1]==0:
                     self.rotate_rotor_two()
-            print('*')
+            # print('*')
         return cipher
 
 def main():
