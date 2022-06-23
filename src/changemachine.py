@@ -14,6 +14,7 @@ plugboard_info_file=data_dir+r'/plugboard_info.txt'
 
 f=open(character_set_file)
 s=f.readline()
+s=s[:-1]
 char_cnt=len(s)
 f.close()
 

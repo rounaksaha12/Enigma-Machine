@@ -46,12 +46,13 @@ class enigma:
         # setup character to index and index to character mappings
         f=open(char_info)
         self.idx_to_char=f.readline()
+        self.idx_to_char=self.idx_to_char[:-1]
         self.char_cnt=len(self.idx_to_char)
         self.char_to_idx={}
         for i,v in enumerate(self.idx_to_char):
             self.char_to_idx[v]=i
         f.close()
-
+        
         # setup rotors
         if isinstance(rotor_info,np.ndarray):
             self.rotor_set=rotor_info
@@ -130,7 +131,6 @@ class enigma:
             if char not in self.char_to_idx:
                 cipher+=char
                 continue
-
             p=self.char_to_idx[char]
             p=self.plugboard[p]
             p=self.rotors[0][p]
@@ -154,7 +154,7 @@ class enigma:
                 self.rotate_rotor_one()
                 if self.vis[1]==0:
                     self.rotate_rotor_two()
-            
+            print('*')
         return cipher
 
 def main():
